@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learning Resource Generator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    /* Global Styles */
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #007BFF, #00d2ff);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .container {
+      background-color: #ffffff;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0px 10px 40px rgba(0, 0, 0, 0.2);
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      color: #007BFF;
+      font-size: 32px;
+      margin-bottom: 20px;
+      border-bottom: 3px solid #007BFF;
+      display: inline-block;
+      padding-bottom: 5px;
+    }
+
+    p.description {
+      font-size: 16px;
+      color: #555;
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      display: block;
+      margin: 20px 0 5px;
+    }
+
+    input[type="text"], 
+    button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+
+    input[type="text"] {
+      margin-bottom: 20px;
+      background-color: #f9f9f9;
+    }
+
+    input[type="text"]:focus {
+      border-color: #007BFF;
+      outline: none;
+      box-shadow: 0 0 10px rgba(0, 123, 255, 0.4);
+    }
+
+    .checkbox-group {
+      text-align: left;
+      margin-bottom: 20px;
+    }
+
+    .checkbox-group label {
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .checkbox-group input {
+      margin-right: 10px;
+    }
+
+    button {
+      background: linear-gradient(to right, #007BFF, #00d2ff);
+      color: #fff;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      background: linear-gradient(to right, #0056b3, #0088ff);
+    }
+
+    .footer {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #777;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 26px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Learning Resource Generator</h1>
+    <p class="description">Get the best resources on your chosen topics from YouTube, Articles, and AI-generated summaries.</p>
+    <form action="/results" method="POST">
+      <label for="topics">Enter Topics (comma-separated):</label>
+      <input type="text" name="topics" id="topics" placeholder="e.g. Compiler design, Lexical analysis" required/>
+
+      <div class="checkbox-group">
+        <label>Select Resource Types:</label><br/>
+        <input type="checkbox" name="resources" value="youtube" /> YouTube<br/>
+        <input type="checkbox" name="resources" value="summaries" /> Summaries<br/>
+        <input type="checkbox" name="resources" value="references" /> Books & Websites<br/><br/> 
+      </div>
+
+      <button type="submit">Get Resources</button>
+    </form>
+    <p class="footer">Powered by YouTube, Google, and AI</p>
+  </div>
+
+</body>
+</html>
