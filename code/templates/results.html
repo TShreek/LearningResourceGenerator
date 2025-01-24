@@ -10,28 +10,29 @@
       font-family: 'Poppins', Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background: linear-gradient(to right, #1e3c72, #2a5298);
-      color: #333;
+      background: linear-gradient(to right, #1e3c72, #2a5298), url('https://source.unsplash.com/1600x900/?technology,education') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
     }
 
     .container {
       max-width: 1100px;
       margin: 50px auto;
       padding: 30px;
-      background: #fff;
+      background: rgba(255, 255, 255, 0.9);
       box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.2);
       border-radius: 15px;
     }
 
     h1 {
       text-align: center;
-      font-size: 40px;
+      font-size: 42px;
       color: #fff;
-      background-color: #007BFF;
+      background: linear-gradient(to right, #007BFF, #00c6ff);
       padding: 20px;
       border-radius: 10px;
       margin-bottom: 30px;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     }
 
     h2, h3 {
@@ -175,53 +176,49 @@
   <div class="container">
     <h1>Resource Results</h1>
     <a href="/" class="back-link">← Back to Home</a>
-    
+
     {% for topic, data in results.items() %}
-    <h2>{{ topic }}</h2>
-  
-    {% if data.youtube %}
-      <h3>Top 3 YouTube Links</h3>
-      <ul>
-        {% for video in data.youtube %}
-          <li class="video-item">
-            <img src="{{ video.thumbnail_url }}" alt="Thumbnail">
-            <div class="video-info">
-              <h3>{{ video.title }}</h3>
-              <p><strong>Channel:</strong> {{ video.channel_name }}</p>
-              <p><strong>Views:</strong> {{ video.views }}</p>
-              <p><strong>Likes:</strong> {{ video.likes }}</p>
-              <p>{{ video.description }}</p>
-              <a href="{{ video.video_url }}" target="_blank">Watch Video</a>
-            </div>
-          </li>
-        {% endfor %}
-      </ul>
-    {% else %}
-      <p class="no-data">No YouTube videos found.</p>
-    {% endif %}
-  
-    {% if data.summary %}
-      <h3>Summary</h3>
-      <div class="summary-box">
-        {{ data.summary | safe }}
-      </div>
-    {% else %}
-      <p class="no-data">No summary available.</p>
-    {% endif %}
-  
-    {% if data.references %}
-      <h3>Recommended Books & Websites</h3>
-      <div class="summary-box">
-        {{ data.references | safe }}
-      </div>
-    {% else %}
-      <p class="no-data">No references available.</p>
-    {% endif %}
-  
-  {% endfor %}
-  
-
-
+      <h2>{{ topic }}</h2>
+    
+      {% if data.youtube %}
+        <h3>Top 3 YouTube Links</h3>
+        <ul>
+          {% for video in data.youtube %}
+            <li class="video-item">
+              <img src="{{ video.thumbnail_url }}" alt="Thumbnail">
+              <div class="video-info">
+                <h3>{{ video.title }}</h3>
+                <p><strong>Channel:</strong> {{ video.channel_name }}</p>
+                <p><strong>Views:</strong> {{ video.views }}</p>
+                <p><strong>Likes:</strong> {{ video.likes }}</p>
+                <p>{{ video.description }}</p>
+                <a href="{{ video.video_url }}" target="_blank">Watch Video</a>
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="no-data">No YouTube videos found.</p>
+      {% endif %}
+    
+      {% if data.summary %}
+        <h3>Summary</h3>
+        <div class="summary-box">
+          {{ data.summary | safe }}
+        </div>
+      {% else %}
+        <p class="no-data">No summary available.</p>
+      {% endif %}
+    
+      {% if data.references %}
+        <h3>Recommended Books & Websites</h3>
+        <div class="summary-box">
+          {{ data.references | safe }}
+        </div>
+      {% else %}
+        <p class="no-data">No references available.</p>
+      {% endif %}
+    {% endfor %}
   </div>
 </body>
 </html>
