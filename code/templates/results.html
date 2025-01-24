@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resource Results</title>
+  <style>
+    /* Global Styles */
+    body {
+      font-family: 'Poppins', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 50px auto;
+      padding: 30px;
+      background: #fff;
+      box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 36px;
+      color: #007BFF;
+      border-bottom: 2px solid #007BFF;
+      padding-bottom: 10px;
+      margin-bottom: 30px;
+    }
+
+    h2, h3 {
+      color: #444;
+      border-left: 5px solid #007BFF;
+      padding-left: 10px;
+      margin-top: 30px;
+    }
+
+    a {
+      text-decoration: none;
+      color: #007BFF;
+      font-weight: bold;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      font-size: 18px;
+      color: #fff;
+      background-color: #007BFF;
+      padding: 10px 20px;
+      border-radius: 5px;
+      transition: 0.3s;
+    }
+
+    .back-link:hover {
+      background-color: #0056b3;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      margin: 15px 0;
+      padding: 15px;
+      background: #f9f9f9;
+      border-left: 5px solid #007BFF;
+      border-radius: 5px;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    li:hover {
+      transform: translateY(-2px);
+      background: #e9f7ff;
+    }
+
+    img {
+      width: 100%;
+      max-width: 300px;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .video-item {
+      display: flex;
+      flex-direction: row;
+      gap: 20px;
+    }
+
+    .video-info {
+      flex: 1;
+    }
+
+    .no-data {
+      font-style: italic;
+      color: #888;
+      background: #ffe6e6;
+      padding: 10px;
+      border-left: 5px solid #ff6b6b;
+      border-radius: 5px;
+    }
+
+    /* SUMMARY BOX */
+    .summary-box {
+      background: #f3f4f6;
+      padding: 20px;
+      border-left: 5px solid #4CAF50;
+      border-radius: 10px;
+      line-height: 1.6;
+      font-size: 16px;
+      color: #333;
+      margin-bottom: 20px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+      font-family: Arial, sans-serif;
+      white-space: pre-line; /* keep line breaks from the model */
+      word-wrap: break-word;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        margin: 20px;
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 28px;
+      }
+
+      li {
+        padding: 10px;
+      }
+
+      .video-item {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Resource Results</h1>
+    <a href="/" class="back-link">← Back to Home</a>
+    
+    {% for topic, data in results.items() %}
+    <h2>{{ topic }}</h2>
+  
+    {% if data.youtube %}
+      <h3>Top 3 YouTube Links</h3>
+      <ul>
+        {% for video in data.youtube %}
+          <li class="video-item">
+            <img src="{{ video.thumbnail_url }}" alt="Thumbnail">
+            <div class="video-info">
+              <h3>{{ video.title }}</h3>
+              <p><strong>Channel:</strong> {{ video.channel_name }}</p>
+              <p><strong>Views:</strong> {{ video.views }}</p>
+              <p><strong>Likes:</strong> {{ video.likes }}</p>
+              <p>{{ video.description }}</p>
+              <a href="{{ video.video_url }}" target="_blank">Watch Video</a>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="no-data">No YouTube videos found.</p>
+    {% endif %}
+  
+    {% if data.summary %}
+      <h3>Summary</h3>
+      <div class="summary-box">
+        {{ data.summary | safe }}
+      </div>
+    {% else %}
+      <p class="no-data">No summary available.</p>
+    {% endif %}
+  
+    {% if data.references %}
+      <h3>Recommended Books & Websites</h3>
+      <div class="summary-box">
+        {{ data.references | safe }}
+      </div>
+    {% else %}
+      <p class="no-data">No references available.</p>
+    {% endif %}
+  
+  {% endfor %}
+  
+
+  </div>
+</body>
+</html>
