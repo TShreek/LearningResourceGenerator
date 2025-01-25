@@ -114,6 +114,29 @@
       color: #777;
     }
 
+    /* Loading screen styling */
+.loading {
+  display: none;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(0, 123, 255, 0.3);
+  border-top: 5px solid #007BFF;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+
     @media (max-width: 600px) {
       .container {
         padding: 20px;
@@ -124,25 +147,40 @@
       }
     }
   </style>
+
+<script>
+  function showLoading() {
+    document.getElementById('submitBtn').disabled = true;  // Disable button to prevent multiple clicks
+    document.getElementById('loading').style.display = 'block';  // Show loading div
+  }
+</script>
+
 </head>
 <body>
 
   <div class="container">
     <h1>Learning Resource Generator</h1>
     <p class="description">Get the best resources on your chosen topics from YouTube, Articles, and AI-generated summaries.</p>
-    <form action="/results" method="POST">
+    <form action="/results" method="POST" onsubmit="showLoading()">
       <label for="topics">Enter Topics (comma-separated):</label>
       <input type="text" name="topics" id="topics" placeholder="e.g. Compiler design, Lexical analysis" required/>
-
+    
       <div class="checkbox-group">
         <label>Select Resource Types:</label><br/>
         <input type="checkbox" name="resources" value="youtube" /> YouTube<br/>
         <input type="checkbox" name="resources" value="summaries" /> Summaries<br/>
         <input type="checkbox" name="resources" value="references" /> Books & Websites<br/><br/> 
       </div>
-
-      <button type="submit">Get Resources</button>
+    
+      <button type="submit" id="submitBtn">Get Resources</button>
+    
+      <!-- Loading animation -->
+      <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <p>Fetching resources, please wait...</p>
+      </div>
     </form>
+    
     <p class="footer">Powered by YouTube, Google, and AI</p>
   </div>
 
