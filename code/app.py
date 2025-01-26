@@ -2,34 +2,17 @@ from flask import Flask, render_template, request
 import aiohttp
 import asyncio
 import os
-from dotenv import load_dotenv
 
 app = Flask(__name__)
 
-# Load API keys from .env file to avoid hardcoding them in the script
-load_dotenv()
-
-YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+# Load API keys from Render secrets
+YOUTUBE_API_KEY = os.environ.get("YOUTUBE_API_KEY")
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 
 import textwrap
 import isodate
 
-
-import asyncio
-
-async def fetch_with_retry(session, url, headers, payload, retries=3, delay=5):
-    for attempt in range(retries):
-        async with session.post(url, headers=headers, json=payload, params={"key": GEMINI_API_KEY}) as response:
-            if response.status == 200:
-                return await response.json()
-            elif response.status == 500:
-                print(f"Attempt {attempt + 1} failed. Retrying in {delay} seconds...")
-                await asyncio.sleep(delay)
-            else:
-                return {"error": f"API request failed with status {response.status}"}
-    return {"error": "Maximum retries reached. The API is currently unavailable."}
-
+# Function to fetch YouTube videos asynchronously
 async def fetch_url(session, url, params):
     async with session.get(url, params=params) as response:
         if response.status != 200:
@@ -78,6 +61,7 @@ async def fetch_youtube_links(topic, youtube_api_key, max_results=3):
                 })
         return video_items
 
+# Function to generate summary using Gemini AI
 async def generate_summary_with_gemini(topic, gemini_api_key):
     url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent"
     headers = {"Content-Type": "application/json"}
@@ -90,24 +74,7 @@ async def generate_summary_with_gemini(topic, gemini_api_key):
             data = await response.json()
             return data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "No summary available.")
 
-def convert_youtube_duration(duration):
-    try:
-        parsed_duration = isodate.parse_duration(duration)
-        total_seconds = int(parsed_duration.total_seconds())
-        minutes, seconds = divmod(total_seconds, 60)
-        hours, minutes = divmod(minutes, 60)
-        if hours:
-            return f"{hours}h {minutes}m {seconds}s"
-        else:
-            return f"{minutes}m {seconds}s"
-    except:
-        return "Unknown"
-
-def shorten_description(description, max_lines):
-    wrapped_text = textwrap.fill(description, width=80)
-    lines = wrapped_text.split("\n")
-    return ' '.join(lines[:max_lines]) + ("..." if len(lines) > max_lines else "")
-
+# Function to generate book and website recommendations using Gemini AI
 async def generate_references_with_gemini(topic, gemini_api_key):
     url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent"
     headers = {"Content-Type": "application/json"}
@@ -121,31 +88,34 @@ async def generate_references_with_gemini(topic, gemini_api_key):
         ],
         "generationConfig": {"temperature": 0.7, "maxOutputTokens": 500}
     }
-    
+
     async with aiohttp.ClientSession() as session:
-        response_data = await fetch_with_retry(session, url, headers, payload)
-        if "error" in response_data:
-            return response_data["error"]
-        
-        if "candidates" in response_data and response_data["candidates"]:
-            return response_data["candidates"][0]["content"]["parts"][0]["text"]
+        async with session.post(url, headers=headers, json=payload, params={"key": gemini_api_key}) as response:
+            data = await response.json()
+            if "candidates" in data and data["candidates"]:
+                return data["candidates"][0]["content"]["parts"][0]["text"]
+            else:
+                return "No references available."
+
+# Utility function to shorten descriptions
+def shorten_description(description, max_lines):
+    wrapped_text = textwrap.fill(description, width=80)
+    lines = wrapped_text.split("\n")
+    return ' '.join(lines[:max_lines]) + ("..." if len(lines) > max_lines else "")
+
+# Utility function to convert YouTube duration
+def convert_youtube_duration(duration):
+    try:
+        parsed_duration = isodate.parse_duration(duration)
+        total_seconds = int(parsed_duration.total_seconds())
+        minutes, seconds = divmod(total_seconds, 60)
+        hours, minutes = divmod(minutes, 60)
+        if hours:
+            return f"{hours}h {minutes}m {seconds}s"
         else:
-            return "No references available."
-
-
-    async with aiohttp.ClientSession() as session:
-        try:
-            async with session.post(url, headers=headers, json=payload, params={"key": gemini_api_key}) as response:
-                if response.status != 200:
-                    return f"Error fetching references: {response.status}, {await response.text()}"
-                
-                data = await response.json()
-                if "candidates" in data and data["candidates"]:
-                    return data["candidates"][0]["content"]["parts"][0]["text"]
-                else:
-                    return "No references available."
-        except Exception as e:
-            return f"Error occurred: {str(e)}"
+            return f"{minutes}m {seconds}s"
+    except:
+        return "Unknown"
 
 @app.route('/')
 def index():
@@ -190,6 +160,5 @@ async def results():
 
     return render_template('results.html', results=results_data)
 
-
 if __name__ == "__main__":
-    app.run(debug=True, host="127.0.0.1", port=5000)
+    app.run(debug=True, host="0.0.0.0", port=5000)
