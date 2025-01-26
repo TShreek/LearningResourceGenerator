@@ -4,3 +4,4 @@ python-dotenv==1.0.0
 textwrap3==0.9.2
 isodate==0.6.1
 gunicorn==21.2.0  # Optional, for production deployment
+aiohttp
