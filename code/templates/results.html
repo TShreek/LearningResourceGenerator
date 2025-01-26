@@ -180,7 +180,7 @@
     {% for topic, data in results.items() %}
       <h2>{{ topic }}</h2>
     
-      {% if data.youtube %}
+      {% if data.get('youtube') %}
         <h3>Top 3 YouTube Links</h3>
         <ul>
           {% for video in data.youtube %}
@@ -201,7 +201,7 @@
         <p class="no-data">No YouTube videos found.</p>
       {% endif %}
     
-      {% if data.summary %}
+      {% if data.get('summary') %}
         <h3>Summary</h3>
         <div class="summary-box">
           {{ data.summary | safe }}
@@ -210,7 +210,7 @@
         <p class="no-data">No summary available.</p>
       {% endif %}
     
-      {% if data.references %}
+      {% if data.get('references') %}
         <h3>Recommended Books & Websites</h3>
         <div class="summary-box">
           {{ data.references | safe }}
@@ -219,6 +219,7 @@
         <p class="no-data">No references available.</p>
       {% endif %}
     {% endfor %}
-  </div>
+</div>
+
 </body>
 </html>
