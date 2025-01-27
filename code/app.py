@@ -2,6 +2,11 @@ from flask import Flask, render_template, request
 import aiohttp
 import asyncio
 import os
+import sqlite3
+import textwrap
+import isodate
+from sklearn.feature_extraction.text import TfidfVectorizer
+import joblib
 
 app = Flask(__name__)
 
@@ -9,8 +14,14 @@ app = Flask(__name__)
 YOUTUBE_API_KEY = os.environ.get("YOUTUBE_API_KEY")
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 
-import textwrap
-import isodate
+# Database setup to store summaries for training
+def save_summary(topic, summary):
+    conn = sqlite3.connect("summaries.db")
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS summaries (topic TEXT, summary TEXT)''')
+    cursor.execute("INSERT INTO summaries (topic, summary) VALUES (?, ?)", (topic, summary))
+    conn.commit()
+    conn.close()
 
 # Function to fetch YouTube videos asynchronously
 async def fetch_url(session, url, params):
@@ -61,7 +72,7 @@ async def fetch_youtube_links(topic, youtube_api_key, max_results=3):
                 })
         return video_items
 
-# Function to generate summary using Gemini AI
+# Function to generate summary using Gemini AI and save it for training
 async def generate_summary_with_gemini(topic, gemini_api_key):
     url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent"
     headers = {"Content-Type": "application/json"}
@@ -72,7 +83,9 @@ async def generate_summary_with_gemini(topic, gemini_api_key):
     async with aiohttp.ClientSession() as session:
         async with session.post(url, headers=headers, json=payload, params={"key": gemini_api_key}) as response:
             data = await response.json()
-            return data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "No summary available.")
+            summary = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "No summary available.")
+            save_summary(topic, summary)
+            return summary
 
 # Function to generate book and website recommendations using Gemini AI
 async def generate_references_with_gemini(topic, gemini_api_key):
@@ -117,6 +130,19 @@ def convert_youtube_duration(duration):
     except:
         return "Unknown"
 
+# Preprocess text and vectorize
+def preprocess_and_vectorize():
+    conn = sqlite3.connect("summaries.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT summary FROM summaries")
+    summaries = [row[0] for row in cursor.fetchall()]
+    conn.close()
+
+    vectorizer = TfidfVectorizer(max_features=5000)
+    X = vectorizer.fit_transform(summaries).toarray()
+    joblib.dump(vectorizer, 'vectorizer.pkl')
+    return X
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -141,7 +167,7 @@ async def results():
             tasks.append(generate_summary_with_gemini(topic, GEMINI_API_KEY))
         if 'references' in resource_types:
             tasks.append(generate_references_with_gemini(topic, GEMINI_API_KEY))
-    
+
     results = await asyncio.gather(*tasks, return_exceptions=True)
 
     results_data = {}
