@@ -11,8 +11,8 @@ import joblib
 app = Flask(__name__)
 
 # Load API keys from Render secrets
-YOUTUBE_API_KEY = os.environ.get("YOUTUBE_API_KEY")
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+YOUTUBE_API_KEY = "INSERT API KEYS"
+GEMINI_API_KEY = "INSERT API KEY"
 
 # Database setup to store summaries for training
 def save_summary(topic, summary):
