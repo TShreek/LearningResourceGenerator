@@ -9,8 +9,8 @@ app = Flask(__name__)
 # Load API keys from .env file to avoid hardcoding them in the script
 load_dotenv()
 
-YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+YOUTUBE_API_KEY = " YOUTUBE_API_KEY "
+GEMINI_API_KEY = " INSERT GEMINI API "
 
 import textwrap
 import isodate
