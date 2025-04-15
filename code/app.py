@@ -74,7 +74,7 @@ async def fetch_youtube_links(topic, youtube_api_key, max_results=3):
 
 # Function to generate summary using Gemini AI and save it for training
 async def generate_summary_with_gemini(topic, gemini_api_key):
-    url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent"
+    url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
     headers = {"Content-Type": "application/json"}
     payload = {
         "contents": [{"parts": [{"text": f"Provide a bullet-point explanation of '{topic}' for a college student."}]}],
@@ -89,7 +89,7 @@ async def generate_summary_with_gemini(topic, gemini_api_key):
 
 # Function to generate book and website recommendations using Gemini AI
 async def generate_references_with_gemini(topic, gemini_api_key):
-    url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent"
+    url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
     headers = {"Content-Type": "application/json"}
     payload = {
         "contents": [
