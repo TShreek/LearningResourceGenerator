@@ -38,7 +38,7 @@ Ensure you have the following installed:
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/LearningResourceGenerator.git
+   git clone https://github.com/TShreek/LearningResourceGenerator.git
    cd LearningResourceGenerator
 
 Create a Virtual Environment:
